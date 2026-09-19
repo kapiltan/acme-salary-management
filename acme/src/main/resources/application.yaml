@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: acme-salary-management
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/acme_salary
+    username: acme
+    password: acme_password
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true

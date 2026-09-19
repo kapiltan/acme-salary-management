@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: acme-postgres
+    environment:
+      POSTGRES_DB: acme_salary
+      POSTGRES_USER: acme
+      POSTGRES_PASSWORD: acme_password
+      TZ: Asia/Kolkata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
