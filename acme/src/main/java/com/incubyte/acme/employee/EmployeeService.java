@@ -34,47 +34,79 @@ public class EmployeeService {
     }
 
     @Transactional
-    public Employee createEmployee(Employee employee) {
-        validateUniqueEmployee(employee);
-
-        return employeeRepository.save(employee);
-    }
-
-    @Transactional
-    public Employee updateEmployee(Long id, Employee updatedEmployee) {
+    public Employee updateEmployee(
+            Long id,
+            String firstName,
+            String lastName,
+            String email,
+            String country,
+            String department,
+            String jobTitle) {
         Employee existing = getEmployee(id);
 
-        existing.setFirstName(updatedEmployee.getFirstName());
-        existing.setLastName(updatedEmployee.getLastName());
-        existing.setEmail(updatedEmployee.getEmail());
-        existing.setCountry(updatedEmployee.getCountry());
-        existing.setDepartment(updatedEmployee.getDepartment());
-        existing.setJobTitle(updatedEmployee.getJobTitle());
+        if (!existing.getEmail().equalsIgnoreCase(email)) {
+            employeeRepository.findByEmail(email)
+                    .ifPresent(employee -> {
+                        throw new EmployeeAlreadyExistsException(
+                                "Email already exists: " + email);
+                    });
+        }
+
+        existing.setFirstName(firstName);
+        existing.setLastName(lastName);
+        existing.setEmail(email);
+        existing.setCountry(country);
+        existing.setDepartment(department);
+        existing.setJobTitle(jobTitle);
 
         return employeeRepository.save(existing);
     }
 
-    private void validateUniqueEmployee(Employee employee) {
-        employeeRepository.findByEmployeeCode(employee.getEmployeeCode())
+    private void validateUniqueEmployee(
+            String employeeCode,
+            String email) {
+        employeeRepository.findByEmployeeCode(employeeCode)
                 .ifPresent(existing -> {
                     throw new EmployeeAlreadyExistsException(
-                            "Employee code already exists: "
-                                    + employee.getEmployeeCode());
+                            "Employee code already exists: " + employeeCode);
                 });
 
-        employeeRepository.findByEmail(employee.getEmail())
+        employeeRepository.findByEmail(email)
                 .ifPresent(existing -> {
                     throw new EmployeeAlreadyExistsException(
-                            "Email already exists: "
-                                    + employee.getEmail());
+                            "Email already exists: " + email);
                 });
     }
 
     private String normalize(String value) {
         if (value == null || value.isBlank()) {
-            return null;
+            return "";
         }
 
         return value.trim();
+    }
+
+    @Transactional
+    public Employee createEmployee(
+            String employeeCode,
+            String firstName,
+            String lastName,
+            String email,
+            String country,
+            String department,
+            String jobTitle) {
+        validateUniqueEmployee(employeeCode, email);
+
+        Employee employee = new Employee();
+
+        employee.setEmployeeCode(employeeCode);
+        employee.setFirstName(firstName);
+        employee.setLastName(lastName);
+        employee.setEmail(email);
+        employee.setCountry(country);
+        employee.setDepartment(department);
+        employee.setJobTitle(jobTitle);
+
+        return employeeRepository.save(employee);
     }
 }

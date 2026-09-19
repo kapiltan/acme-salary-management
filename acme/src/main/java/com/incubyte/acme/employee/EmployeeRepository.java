@@ -19,18 +19,18 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             FROM Employee e
             WHERE
                 (
-                    :search IS NULL
+                    :search = ''
                     OR LOWER(e.employeeCode) LIKE LOWER(CONCAT('%', :search, '%'))
                     OR LOWER(e.firstName) LIKE LOWER(CONCAT('%', :search, '%'))
                     OR LOWER(e.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
                     OR LOWER(e.email) LIKE LOWER(CONCAT('%', :search, '%'))
                 )
                 AND (
-                    :country IS NULL
+                    :country = ''
                     OR LOWER(e.country) = LOWER(:country)
                 )
                 AND (
-                    :department IS NULL
+                    :department = ''
                     OR LOWER(e.department) = LOWER(:department)
                 )
             """)
@@ -38,6 +38,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             @Param("search") String search,
             @Param("country") String country,
             @Param("department") String department,
-            Pageable pageable
-    );
+            Pageable pageable);
 }
