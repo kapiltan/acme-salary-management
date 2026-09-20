@@ -22,14 +22,16 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public Page<EmployeeResponse> searchEmployees(
+    public PageResponse<EmployeeResponse> searchEmployees(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String country,
             @RequestParam(required = false) String department,
             @PageableDefault(size = 20, sort = "lastName", direction = Sort.Direction.ASC) Pageable pageable) {
-        return employeeService
+        Page<EmployeeResponse> page = employeeService
                 .searchEmployees(search, country, department, pageable)
                 .map(EmployeeResponse::from);
+
+        return PageResponse.from(page);
     }
 
     @GetMapping("/{id}")
