@@ -1,7 +1,6 @@
 package com.incubyte.acme.employee;
 
 import com.incubyte.acme.common.GlobalExceptionHandler;
-import com.incubyte.acme.employee.dto.EmployeeCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -12,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EmployeeController.class)
@@ -25,25 +25,28 @@ class EmployeeControllerTest {
     private EmployeeService employeeService;
 
     @Test
-    void shouldReturnBadRequestWhenEmployeeRequestIsInvalid()
-            throws Exception {
-
+    void shouldReturnBadRequestWhenEmployeeRequestIsInvalid() throws Exception {
         String request = """
                 {
-                    "employeeCode": "",
-                    "firstName": "",
-                    "lastName": "Tanwar",
-                    "email": "invalid-email",
-                    "country": "India",
-                    "department": "Engineering",
-                    "jobTitle": "Software Engineer"
+                  "employeeCode": "",
+                  "firstName": "",
+                  "lastName": "",
+                  "email": "invalid-email",
+                  "country": "",
+                  "department": "",
+                  "jobTitle": ""
                 }
                 """;
 
         mockMvc.perform(post("/api/employees")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(request))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message").value("Validation failed"))
+                .andExpect(jsonPath("$.errors.employeeCode").exists())
+                .andExpect(jsonPath("$.errors.email").exists());
 
         verifyNoInteractions(employeeService);
     }
