@@ -12,5 +12,26 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  backend:
+    image: acme-salary-backend:latest
+    container_name: acme-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/acme_salary
+      SPRING_DATASOURCE_USERNAME: acme
+      SPRING_DATASOURCE_PASSWORD: acme_password
+      JAVA_TOOL_OPTIONS: "-Duser.timezone=Asia/Kolkata"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  frontend:
+    image: acme-salary-frontend:latest
+    container_name: acme-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
 volumes:
   postgres_data:
