@@ -8,6 +8,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -49,5 +51,17 @@ class EmployeeControllerTest {
                 .andExpect(jsonPath("$.errors.email").exists());
 
         verifyNoInteractions(employeeService);
+    }
+
+    @Test
+    void shouldReturnInternalServerErrorWhenUnexpectedExceptionOccurs() throws Exception {
+        when(employeeService.getEmployee(1L))
+                .thenThrow(new RuntimeException("database failure"));
+
+        mockMvc.perform(get("/api/employees/1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.error").value("Internal Server Error"))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred"));
     }
 }

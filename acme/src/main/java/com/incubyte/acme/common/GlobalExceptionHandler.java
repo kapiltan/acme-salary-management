@@ -68,6 +68,14 @@ public class GlobalExceptionHandler {
                 return response;
         }
 
+        @ExceptionHandler(Exception.class)
+        @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+        public Map<String, Object> handleUnexpectedException(Exception exception) {
+                return error(
+                                HttpStatus.INTERNAL_SERVER_ERROR,
+                                "An unexpected error occurred");
+        }
+
         private Map<String, Object> error(
                         HttpStatus status,
                         String message) {
