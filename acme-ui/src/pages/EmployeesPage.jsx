@@ -86,98 +86,130 @@ function EmployeesPage() {
 
     return (
         <div>
-            <h1>Employee Management</h1>
-
-            <div>
-                <input
-                    type="text"
-                    placeholder="Search employee..."
-                    value={search}
-                    onChange={handleSearchChange}
-                />
-
-                <input
-                    type="text"
-                    placeholder="Country"
-                    value={country}
-                    onChange={handleCountryChange}
-                />
-
-                <input
-                    type="text"
-                    placeholder="Department"
-                    value={department}
-                    onChange={handleDepartmentChange}
-                />
+            <div className="page-header">
+                <h1>Employee Management</h1>
+                <p>Search, filter and manage employee salary information.</p>
             </div>
 
-            <p>
-                Total employees: {totalElements}
-            </p>
+            <div className="card">
+                <div className="filters">
+                    <input
+                        type="text"
+                        placeholder="Search by name, email or employee ID"
+                        value={search}
+                        onChange={handleSearchChange}
+                        aria-label="Search employees"
+                    />
 
-            {loading && <p>Loading employees...</p>}
+                    <input
+                        type="text"
+                        placeholder="Country"
+                        value={country}
+                        onChange={handleCountryChange}
+                        aria-label="Filter by country"
+                    />
 
-            {error && <p>{error}</p>}
+                    <input
+                        type="text"
+                        placeholder="Department"
+                        value={department}
+                        onChange={handleDepartmentChange}
+                        aria-label="Filter by department"
+                    />
+                </div>
 
-            {!loading && !error && (
-                <>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Employee Code</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Country</th>
-                                <th>Department</th>
-                                <th>Job Title</th>
-                            </tr>
-                        </thead>
+                <p style={{ marginBottom: "16px", fontSize: "14px" }}>
+                    <strong>{totalElements.toLocaleString()}</strong>{" "}
+                    employees found
+                </p>
 
-                        <tbody>
-                            {employees.map((employee) => (
-                                <tr key={employee.id}>
-                                    <td>{employee.employeeCode}</td>
+                {loading && (
+                    <p role="status">Loading employees...</p>
+                )}
 
-                                    <td>
-                                        <button
-                                            onClick={() => setSelectedEmployeeId(employee.id)}
-                                        >
-                                            {employee.firstName}{" "}
-                                            {employee.lastName}
-                                        </button>
-                                    </td>
+                {error && (
+                    <p className="error-message" role="alert">
+                        {error}
+                    </p>
+                )}
 
-                                    <td>{employee.email}</td>
-                                    <td>{employee.country}</td>
-                                    <td>{employee.department}</td>
-                                    <td>{employee.jobTitle}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                {!loading && !error && (
+                    <>
+                        {employees.length === 0 ? (
+                            <p>No employees found.</p>
+                        ) : (
+                            <div className="data-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Employee Code</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Country</th>
+                                            <th>Department</th>
+                                            <th>Job Title</th>
+                                        </tr>
+                                    </thead>
 
-                    <div>
-                        <button
-                            onClick={goToPreviousPage}
-                            disabled={page === 0}
-                        >
-                            Previous
-                        </button>
+                                    <tbody>
+                                        {employees.map((employee) => (
+                                            <tr key={employee.id}>
+                                                <td>{employee.employeeCode}</td>
 
-                        <span>
-                            {" "}
-                            Page {page + 1} of {totalPages}{" "}
-                        </span>
+                                                <td>
+                                                    <button
+                                                        type="button"
+                                                        className="link-button"
+                                                        onClick={() =>
+                                                            setSelectedEmployeeId(
+                                                                employee.id
+                                                            )
+                                                        }
+                                                    >
+                                                        {employee.firstName}{" "}
+                                                        {employee.lastName}
+                                                    </button>
+                                                </td>
 
-                        <button
-                            onClick={goToNextPage}
-                            disabled={page >= totalPages - 1}
-                        >
-                            Next
-                        </button>
-                    </div>
-                </>
-            )}
+                                                <td>{employee.email}</td>
+                                                <td>{employee.country}</td>
+                                                <td>{employee.department}</td>
+                                                <td>{employee.jobTitle}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+
+                        <div className="pagination">
+                            <span>
+                                Page {page + 1} of {totalPages}
+                            </span>
+
+                            <div className="pagination-actions">
+                                <button
+                                    type="button"
+                                    className="secondary-button"
+                                    onClick={goToPreviousPage}
+                                    disabled={page === 0}
+                                >
+                                    Previous
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="primary-button"
+                                    onClick={goToNextPage}
+                                    disabled={page >= totalPages - 1}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </div>
         </div>
     );
 }

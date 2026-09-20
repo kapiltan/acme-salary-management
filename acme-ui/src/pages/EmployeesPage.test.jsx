@@ -94,7 +94,8 @@ describe("EmployeesPage", () => {
         render(<EmployeesPage />);
 
         await waitFor(() => {
-            expect(screen.getByText(/Total employees:\s*0/i)).toBeInTheDocument();
+            expect(screen.getByText("0")).toBeInTheDocument();
+            expect(screen.getByText("No employees found.")).toBeInTheDocument();
         });
     });
 });

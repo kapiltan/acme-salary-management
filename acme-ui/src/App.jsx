@@ -1,27 +1,46 @@
 import { useState } from "react";
 import EmployeesPage from "./pages/EmployeesPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import "./App.css";
 
 function App() {
   const [page, setPage] = useState("employees");
 
   return (
-    <div>
-      <nav>
-        <button onClick={() => setPage("employees")}>
-          Employees
-        </button>
+    <div className="app-shell">
+      <header className="app-header">
+        <div className="app-header-inner">
+          <div className="app-brand">
+            <div className="app-brand-mark">A</div>
+            <span className="app-brand-text">
+              ACME Salary Management
+            </span>
+          </div>
 
-        <button onClick={() => setPage("analytics")}>
-          Analytics
-        </button>
-      </nav>
+          <nav className="app-nav">
+            <button
+              type="button"
+              onClick={() => setPage("employees")}
+              aria-current={page === "employees" ? "page" : undefined}
+            >
+              Employees
+            </button>
 
-      <hr />
+            <button
+              type="button"
+              onClick={() => setPage("analytics")}
+              aria-current={page === "analytics" ? "page" : undefined}
+            >
+              Analytics
+            </button>
+          </nav>
+        </div>
+      </header>
 
-      {page === "employees" && <EmployeesPage />}
-
-      {page === "analytics" && <AnalyticsPage />}
+      <main className="app-main">
+        {page === "employees" && <EmployeesPage />}
+        {page === "analytics" && <AnalyticsPage />}
+      </main>
     </div>
   );
 }
